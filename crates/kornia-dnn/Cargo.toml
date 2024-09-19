@@ -1,0 +1,21 @@
+[package]
+name = "kornia-dnn"
+authors.workspace = true
+description = "ONNX Deep Neural Network (DNN) library for Rust"
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+publish = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[features]
+ort-load-dynamic = ["ort/load-dynamic"]
+ort-cuda = ["ort/cuda"]
+
+[dependencies]
+kornia-core = { workspace = true }
+kornia-image = { workspace = true }
+ort = { version = "2.0.0-rc.4", default-features = false }
+thiserror = "1"
