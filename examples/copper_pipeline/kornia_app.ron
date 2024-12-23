@@ -1,0 +1,15 @@
+(
+    tasks: [
+        (
+            id: "cam",
+            type: "tasks::Webcam",
+        ),
+        (
+            id: "rerun",
+            type: "tasks::RerunViz",
+        ),
+     ],
+    cnx: [
+        (src: "cam",  dst: "rerun",   msg: "tasks::ImageU8Msg"),
+    ],
+)
