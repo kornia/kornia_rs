@@ -1,3 +1,5 @@
+use std::clone::CloneToUninit;
+
 use cu29::prelude::*;
 
 use crate::tasks::ImageU8Msg;
@@ -22,7 +24,19 @@ impl<'cl> CuSinkTask<'cl> for RerunViz {
         })
     }
 
-    fn process(&mut self, _clock: &RobotClock, msg: &Self::Input) -> Result<(), CuError> {
+    fn process(&mut self, _clock: &RobotClock, input: &Self::Input) -> Result<(), CuError> {
+        let Some(img) = input.payload() else {
+            return Ok(());
+        };
+
+        self.rec.log(
+            "image",
+            &rerun::Image::from_elements(
+                img.image.as_slice(),
+                img.image.size().into(),
+                rerun::ColorModel::RGB,
+            ),
+        );
         Ok(())
     }
 }
