@@ -1,17 +1,15 @@
-use std::clone::CloneToUninit;
-
 use cu29::prelude::*;
 
-use crate::tasks::ImageU8Msg;
+use crate::tasks::ImageRGBU8Msg;
 
-struct RerunViz {
+pub struct RerunViz {
     rec: rerun::RecordingStream,
 }
 
 impl Freezable for RerunViz {}
 
 impl<'cl> CuSinkTask<'cl> for RerunViz {
-    type Input = input_msg!('cl, ImageU8Msg);
+    type Input = input_msg!('cl, ImageRGBU8Msg);
 
     fn new(_config: Option<&ComponentConfig>) -> Result<Self, CuError>
     where
@@ -24,19 +22,27 @@ impl<'cl> CuSinkTask<'cl> for RerunViz {
         })
     }
 
-    fn process(&mut self, _clock: &RobotClock, input: &Self::Input) -> Result<(), CuError> {
+    fn process(&mut self, _clock: &RobotClock, input: Self::Input) -> Result<(), CuError> {
         let Some(img) = input.payload() else {
             return Ok(());
         };
 
-        self.rec.log(
-            "image",
-            &rerun::Image::from_elements(
-                img.image.as_slice(),
-                img.image.size().into(),
-                rerun::ColorModel::RGB,
-            ),
-        );
+        // println!("{:?}", img.image.as_slice());
+        println!("RerunViz::process: logging image: {:?}", img.image.size());
+
+        self.rec
+            .log(
+                "image",
+                &rerun::Image::from_elements(
+                    img.image.as_slice(),
+                    img.image.size().into(),
+                    rerun::ColorModel::RGB,
+                ),
+            )
+            .map_err(|e| CuError::new_with_cause("Failed to log image", e))?;
+
+        println!("RerunViz::process: logged image");
+
         Ok(())
     }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "copper_pipeline"
+name = "copper"
 authors.workspace = true
 categories.workspace = true
 description.workspace = true
@@ -13,6 +13,7 @@ rust-version.workspace = true
 version.workspace = true
 
 [dependencies]
+bincode = "2.0.0-rc.3"
 cu29 = { git = "https://github.com/copper-project/copper-rs.git", branch = "master" }
 cu29-helpers = { git = "https://github.com/copper-project/copper-rs.git", branch = "master" }
 kornia = { workspace = true, features = ["gstreamer"] }

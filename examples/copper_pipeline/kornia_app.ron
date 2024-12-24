@@ -2,14 +2,14 @@
     tasks: [
         (
             id: "cam",
-            type: "tasks::Webcam",
+            type: "copper::tasks::webcam::Webcam",
         ),
         (
             id: "rerun",
-            type: "tasks::RerunViz",
+            type: "copper::tasks::rerun_viz::RerunViz",
         ),
      ],
     cnx: [
-        (src: "cam",  dst: "rerun",   msg: "tasks::ImageU8Msg"),
+        (src: "cam",  dst: "rerun",   msg: "copper::tasks::ImageRGBU8Msg"),
     ],
 )

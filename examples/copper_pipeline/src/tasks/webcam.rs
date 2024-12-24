@@ -1,21 +1,22 @@
 use cu29::prelude::*;
 use kornia::io::stream::{CameraCapture, V4L2CameraConfig};
 
-use crate::tasks::ImageU8Msg;
+use crate::tasks::ImageRGBU8Msg;
 
-struct Webcam {
+pub struct Webcam {
     cam: CameraCapture,
 }
 
 impl Freezable for Webcam {}
 
 impl<'cl> CuSrcTask<'cl> for Webcam {
-    type Output = output_msg!('cl, ImageU8Msg);
+    type Output = output_msg!('cl, ImageRGBU8Msg);
 
     fn new(_config: Option<&ComponentConfig>) -> Result<Self, CuError>
     where
         Self: Sized,
     {
+        println!("Webcam::new");
         let cam = V4L2CameraConfig::default()
             .with_camera_id(0)
             .build()
@@ -25,18 +26,20 @@ impl<'cl> CuSrcTask<'cl> for Webcam {
     }
 
     fn start(&mut self, _clock: &RobotClock) -> Result<(), CuError> {
+        println!("Webcam::start");
         self.cam
             .start()
             .map_err(|e| CuError::new_with_cause("Failed to start camera", e))
     }
 
     fn stop(&mut self, _clock: &RobotClock) -> Result<(), CuError> {
+        println!("Webcam::stop");
         self.cam
             .close()
             .map_err(|e| CuError::new_with_cause("Failed to stop camera", e))
     }
 
-    fn process(&mut self, _clock: &RobotClock, new_msg: &Self::Output) -> Result<(), CuError> {
+    fn process(&mut self, _clock: &RobotClock, output: Self::Output) -> Result<(), CuError> {
         let Some(img) = self
             .cam
             .grab()
@@ -45,8 +48,7 @@ impl<'cl> CuSrcTask<'cl> for Webcam {
             return Ok(());
         };
 
-        // TODO: send the image to the next task
-        // new_msg = ImageU8Msg { image: img };
+        output.set_payload(ImageRGBU8Msg { image: img });
 
         Ok(())
     }
