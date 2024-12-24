@@ -20,7 +20,7 @@ impl std::fmt::Debug for ImageRGBU8Msg {
 impl Default for ImageRGBU8Msg {
     fn default() -> Self {
         Self {
-            image: ImageRGBU8::new([480, 640].into(), vec![0; 480 * 640 * 3]).unwrap(),
+            image: ImageRGBU8::new([0, 0].into(), vec![]).unwrap(),
         }
     }
 }

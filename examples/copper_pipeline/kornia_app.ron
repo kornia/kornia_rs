@@ -3,6 +3,12 @@
         (
             id: "cam",
             type: "copper::tasks::webcam::Webcam",
+            config: {
+                "camera_id": 0,
+                "res_rows": 480,
+                "res_cols": 640,
+                "fps": 30,
+            },
         ),
         (
             id: "rerun",
