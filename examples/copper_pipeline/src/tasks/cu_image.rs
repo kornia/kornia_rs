@@ -50,6 +50,12 @@ pub struct ImageGrayU8Msg {
     pub image: ImageGrayU8,
 }
 
+impl std::fmt::Debug for ImageGrayU8Msg {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "ImageGrayU8Msg(size: {:?})", self.image.size())
+    }
+}
+
 impl Default for ImageGrayU8Msg {
     fn default() -> Self {
         Self {

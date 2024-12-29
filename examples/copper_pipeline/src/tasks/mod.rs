@@ -4,4 +4,4 @@ pub mod sobel;
 pub mod webcam;
 
 mod cu_image;
-pub use cu_image::ImageRGBU8Msg;
+pub use cu_image::{ImageGrayU8Msg, ImageRGBU8Msg};
