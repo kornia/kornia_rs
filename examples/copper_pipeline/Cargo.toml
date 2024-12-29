@@ -14,8 +14,8 @@ version.workspace = true
 
 [dependencies]
 bincode = "2.0.0-rc.3"
-cu29 = { git = "https://github.com/copper-project/copper-rs.git", branch = "master" }
-cu29-helpers = { git = "https://github.com/copper-project/copper-rs.git", branch = "master" }
+cu29 = { git = "https://github.com/copper-project/copper-rs.git", sha = "2f8bbe62b341d20c0913ac4456501bfffb76f9ad" }
+cu29-helpers = { git = "https://github.com/copper-project/copper-rs.git", sha = "2f8bbe62b341d20c0913ac4456501bfffb76f9ad" }
 kornia = { workspace = true, features = ["gstreamer"] }
 rerun = { workspace = true }
 tempfile = "3.14"
