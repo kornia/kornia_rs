@@ -1,6 +1,6 @@
 use cu29::prelude::*;
 
-use crate::tasks::ImageRGBU8Msg;
+use super::cu_image::ImageRGBU8Msg;
 
 pub struct RerunViz {
     rec: rerun::RecordingStream,
@@ -9,7 +9,7 @@ pub struct RerunViz {
 impl Freezable for RerunViz {}
 
 impl<'cl> CuSinkTask<'cl> for RerunViz {
-    type Input = input_msg!('cl, ImageRGBU8Msg);
+    type Input = input_msg!('cl, ImageRGBU8Msg, ImageRGBU8Msg);
 
     fn new(_config: Option<&ComponentConfig>) -> Result<Self, CuError>
     where
@@ -23,26 +23,29 @@ impl<'cl> CuSinkTask<'cl> for RerunViz {
     }
 
     fn process(&mut self, _clock: &RobotClock, input: Self::Input) -> Result<(), CuError> {
-        let Some(img) = input.payload() else {
-            return Ok(());
-        };
+        let (img1, img2) = input;
 
-        // println!("{:?}", img.image.as_slice());
-        println!("RerunViz::process: logging image: {:?}", img.image.size());
+        if let Some(img) = img1.payload() {
+            log_image(&self.rec, "webcam", &img)?;
+        }
 
-        self.rec
-            .log(
-                "image",
-                &rerun::Image::from_elements(
-                    img.image.as_slice(),
-                    img.image.size().into(),
-                    rerun::ColorModel::RGB,
-                ),
-            )
-            .map_err(|e| CuError::new_with_cause("Failed to log image", e))?;
-
-        println!("RerunViz::process: logged image");
+        if let Some(img) = img2.payload() {
+            log_image(&self.rec, "garden", &img)?;
+        }
 
         Ok(())
     }
+}
+
+fn log_image(rec: &rerun::RecordingStream, name: &str, img: &ImageRGBU8Msg) -> Result<(), CuError> {
+    rec.log(
+        name,
+        &rerun::Image::from_elements(
+            img.image.as_slice(),
+            img.image.size().into(),
+            rerun::ColorModel::RGB,
+        ),
+    )
+    .map_err(|e| CuError::new_with_cause("Failed to log image", e))?;
+    Ok(())
 }

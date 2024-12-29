@@ -1,46 +1,34 @@
 use cu29::prelude::*;
-use kornia::io::stream::{CameraCapture, V4L2CameraConfig};
+use kornia::io::stream::{CameraCapture, RTSPCameraConfig};
 
 use super::cu_image::ImageRGBU8Msg;
 
-// default config for the webcam
-const DEFAULT_CAMERA_ID: u32 = 0;
-const DEFAULT_RES_ROWS: u32 = 480;
-const DEFAULT_RES_COLS: u32 = 640;
-const DEFAULT_FPS: u32 = 30;
+// default config for the rtsp camera
+const DEFAULT_URL: &str = "rtsp://admin:admin@192.168.1.100:554/Streaming/Channels/1";
 
-pub struct Webcam {
+pub struct RtspCamera {
     cam: CameraCapture,
 }
 
-impl Freezable for Webcam {}
+impl Freezable for RtspCamera {}
 
-impl<'cl> CuSrcTask<'cl> for Webcam {
+impl<'cl> CuSrcTask<'cl> for RtspCamera {
     type Output = output_msg!('cl, ImageRGBU8Msg);
 
     fn new(config: Option<&ComponentConfig>) -> Result<Self, CuError>
     where
         Self: Sized,
     {
-        let (camera_id, res_rows, res_cols, fps) = if let Some(config) = config {
-            let camera_id = config.get::<u32>("camera_id").unwrap_or(DEFAULT_CAMERA_ID);
-            let res_rows = config.get::<u32>("res_rows").unwrap_or(DEFAULT_RES_ROWS);
-            let res_cols = config.get::<u32>("res_cols").unwrap_or(DEFAULT_RES_COLS);
-            let fps = config.get::<u32>("fps").unwrap_or(DEFAULT_FPS);
-            (camera_id, res_rows, res_cols, fps)
+        let url = if let Some(config) = config {
+            config
+                .get::<String>("url")
+                .unwrap_or(DEFAULT_URL.to_string())
         } else {
-            (
-                DEFAULT_CAMERA_ID,
-                DEFAULT_RES_ROWS,
-                DEFAULT_RES_COLS,
-                DEFAULT_FPS,
-            )
+            DEFAULT_URL.to_string()
         };
 
-        let cam = V4L2CameraConfig::new()
-            .with_camera_id(camera_id)
-            .with_fps(fps)
-            .with_size([res_cols as usize, res_rows as usize].into())
+        let cam = RTSPCameraConfig::new()
+            .with_url(&url)
             .build()
             .map_err(|e| CuError::new_with_cause("Failed to build camera", e))?;
 

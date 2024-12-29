@@ -11,11 +11,23 @@
             },
         ),
         (
+            id: "cam_garden",
+            type: "copper::tasks::rtsp::RtspCamera",
+            config: {
+                "url": "rtsp://tapo_entrance:123456789@192.168.1.141:554/stream2",
+            },
+        ),
+        (
             id: "rerun",
             type: "copper::tasks::rerun_viz::RerunViz",
         ),
      ],
     cnx: [
         (src: "cam",  dst: "rerun",   msg: "copper::tasks::ImageRGBU8Msg"),
+        (src: "cam_garden",  dst: "rerun",   msg: "copper::tasks::ImageRGBU8Msg"),
     ],
+    logging: (
+        slab_size_mib: 1024, // Preallocates 1GiB of memory map file at a time
+        section_size_mib: 100, // Preallocates 100MiB of memory map per section for the main logger.
+    ),
 )
