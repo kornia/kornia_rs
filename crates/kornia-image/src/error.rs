@@ -15,7 +15,7 @@ pub enum ImageError {
 
     /// Error when the image shape is not valid.
     #[error("Invalid image shape")]
-    InvalidImageShape(#[from] kornia_core::TensorError),
+    InvalidImageShape(#[from] kornia_tensor::TensorError),
 
     /// Error when the image size is not valid.
     #[error("Invalid image size ({0}, {1}) mismatch ({2}, {3})")]
@@ -44,4 +44,8 @@ pub enum ImageError {
     /// Error when the cannot compute the determinant.
     #[error("Cannot compute the determinant: matrix is singular")]
     CannotComputeDeterminant,
+
+    /// Error when the kernel length is invalid.
+    #[error("Invalid kernel length {0} and {1}")]
+    InvalidKernelLength(usize, usize),
 }
