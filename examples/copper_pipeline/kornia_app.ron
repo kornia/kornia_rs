@@ -21,14 +21,16 @@
             id: "rerun",
             type: "copper::tasks::rerun_viz::RerunViz",
         ),
-        //(
-        //    id: "sobel",
-        //    type: "copper::tasks::sobel::Sobel",
-        //),
+        (
+            id: "sobel",
+            type: "copper::tasks::sobel::Sobel",
+        ),
     ],
     cnx: [
         (src: "cam_garden", dst: "rerun", msg: "copper::tasks::ImageRGBU8Msg"),
         (src: "cam", dst: "rerun", msg: "copper::tasks::ImageRGBU8Msg"),
+        (src: "sobel", dst: "rerun", msg: "copper::tasks::ImageGrayU8Msg"),
+        (src: "cam", dst: "sobel", msg: "copper::tasks::ImageRGBU8Msg"),
     ],
     logging: (
         slab_size_mib: 1024, // Preallocates 1GiB of memory map file at a time

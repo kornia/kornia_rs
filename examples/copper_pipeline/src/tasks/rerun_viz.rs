@@ -9,7 +9,7 @@ pub struct RerunViz {
 impl Freezable for RerunViz {}
 
 impl<'cl> CuSinkTask<'cl> for RerunViz {
-    type Input = input_msg!('cl, ImageRGBU8Msg, ImageRGBU8Msg);
+    type Input = input_msg!('cl, ImageRGBU8Msg, ImageRGBU8Msg, ImageGrayU8Msg);
 
     fn new(_config: Option<&ComponentConfig>) -> Result<Self, CuError>
     where
@@ -23,14 +23,18 @@ impl<'cl> CuSinkTask<'cl> for RerunViz {
     }
 
     fn process(&mut self, _clock: &RobotClock, input: Self::Input) -> Result<(), CuError> {
-        let (img2, img1) = input;
+        let (img1, img2, img3) = input;
 
         if let Some(img) = img1.payload() {
-            log_image_rgb(&self.rec, "webcam", &img)?;
+            log_image_rgb(&self.rec, "webcam", img)?;
         }
 
         if let Some(img) = img2.payload() {
-            log_image_rgb(&self.rec, "garden", &img)?;
+            log_image_gray(&self.rec, "sobel", img)?;
+        }
+
+        if let Some(img) = img3.payload() {
+            log_image_rgb(&self.rec, "rtsp", img)?;
         }
 
         Ok(())
